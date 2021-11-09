@@ -11,6 +11,12 @@ public class Player{
         out_this_round = false;
     }
 
+    public Player(String name, double balance){
+        this.name = name;
+        this.balance = balance;
+        out_this_round = false;
+    }
+
     public void bet(double amount){
         balance -= amount;
     }
