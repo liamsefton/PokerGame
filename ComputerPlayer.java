@@ -11,9 +11,9 @@ public class ComputerPlayer extends Player{
     public int getDecision(int game_type){
         Random rand = new Random();
         if(game_type == 0){
-            if(hand.getScore(game_type) < 12)
+            if(hand.getScore(game_type) < 15)
                 return 1;
-            else if(hand.getScore(game_type) < 18){
+            else if(hand.getScore(game_type) < 19){
                 if(rand.nextInt(10) < 5)
                     return 1;
                 else
@@ -23,5 +23,6 @@ public class ComputerPlayer extends Player{
         }
         return -1;
     }
+
     
 }
