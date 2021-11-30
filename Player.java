@@ -24,6 +24,10 @@ public class Player{
 
     public void bet(double amount){
         current_bet += amount;
+        if(current_bet > balance){
+            System.out.println("You bet more money than you have, going all in.");
+            current_bet = balance;
+        }
     }
 
     public void fold(){

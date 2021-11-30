@@ -8,6 +8,11 @@ public class Hand {
         }
     }
 
+    public Hand(int card){
+        this.cards = new int[1];
+        this.cards[0] = card;
+    }
+
     public int getScore(int game_type){
         if(game_type == 0){
             int retVal = 0;
@@ -77,13 +82,13 @@ public class Hand {
 
             int cardSuit = cards[i] % 4;
             if(cardSuit == 0)
-                tempString += "C";
+                tempString += "♧";
             else if(cardSuit == 1)
-                tempString += "D";
+                tempString += "♢";
             else if(cardSuit == 2)
-                tempString += "H";
+                tempString += "♡";
             else if(cardSuit == 3)
-                tempString += "S";
+                tempString += "♤";
 
             retString[i] = tempString;
         }

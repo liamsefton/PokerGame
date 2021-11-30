@@ -1,5 +1,7 @@
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
 public class GameManager {
     public Player[] players;
     public int currentPlayer;
@@ -57,14 +59,27 @@ public class GameManager {
             Hand houseHand = new Hand(deck.getCards(2)); //dealer's hand
 
             printBlackjack();
-            System.out.println("Dealer hand is: " + houseHand.getHandString()[0] + " and 1 card unknown");
+            System.out.println("Dealer hand is: " + houseHand.getHandString()[0] + " and 1 card face down.");
+
+            int dealer_score = (new Hand(houseHand.cards[0]).getScore(gameType));
+            if(!players[0].out_this_round && dealer_score == 10 || dealer_score == 11){
+                System.out.println("Enter 1 to buy insurance or 0 to do nothing: ");
+                if(scanner.nextLine().equals("1")){
+                    System.out.println("Enter amount to bet: ");
+                    ((HumanPlayer)players[0]).betInsurance(Double.parseDouble(scanner.nextLine()));
+                }
+            }
 
             if(houseHand.getScore(gameType) == 21){
                 System.out.println("Dealer has blackjack with the hand: " + Arrays.toString(houseHand.getHandString()));
-                System.out.println("All players without a blackjack lose.");
+                System.out.println("All players without a blackjack or insurance lose.");
                 for(int i = 0; i < players.length; i++){
                     if(!players[i].out_this_round){
-                        if(players[i].hand.getScore(gameType) == 21){
+                        if(i == 0 && ((HumanPlayer)players[0]).has_insurance){
+                            ((HumanPlayer)players[0]).winInsurance();
+                            players[0].out_this_round = true;
+                        }
+                        else if(players[i].hand.getScore(gameType) == 21){
                             players[i].tie();
                         }
                         else{
@@ -73,6 +88,10 @@ public class GameManager {
                         playersOutOrStanding++;
                     }
                 }
+            }
+
+            if(!players[0].out_this_round && ((HumanPlayer)players[0]).has_insurance){
+                ((HumanPlayer)players[0]).loseInsurance();
             }
             
             //checking for natural blackjack
@@ -83,7 +102,37 @@ public class GameManager {
                 }
             }
 
+            if(!players[0].out_this_round){
+                System.out.println("Enter 1 to double down or 0 to do nothing: ");
+                if(scanner.nextLine().equals("1")){
+                    players[0].hand.addCards(deck.getCards(1));
+                    players[0].bet(players[0].current_bet);
+                    players[0].standing = true;
+                    playersOutOrStanding++;
+                }
+                if(players[0].hand.getScore(gameType) > 21){
+                    players[0].lose();
+                    playersOutOrStanding++;
+                }
+            }
+
+            for(int i = 1; i < players.length; i++){
+                if(players[i].hand.getScore(gameType) == 11){
+                    players[i].bet(players[i].current_bet);
+                    players[i].hand.addCards(deck.getCards(1));
+                    players[i].standing = true;
+                    playersOutOrStanding++;
+                    System.out.println("CPU " + Integer.toString(i) + " has doubled down!");
+                }
+            }
+
             while(playersOutOrStanding < players.length){ //batch updating for each hit/stand
+                try{
+                    TimeUnit.MILLISECONDS.sleep(500);
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
                 if(!players[0].out_this_round && !players[0].standing && players[0].hand.getScore(gameType) < 21){
                     System.out.println("Enter 0 to stand or 1 to hit: ");
                     if(scanner.nextLine().equals("1")){
@@ -115,9 +164,16 @@ public class GameManager {
                         players[i].lose();
                         playersOutOrStanding++;
                     }
+
                 }
                 System.out.println("Hands are: ");
                 printBlackjack();
+            }
+            try{
+                TimeUnit.MILLISECONDS.sleep(1000);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
             }
             
 
@@ -140,18 +196,32 @@ public class GameManager {
             while(houseHand.getScore(gameType) < 17){
                 System.out.println("Dealer hand worth less than 17, hitting...");
                 houseHand.addCards(deck.getCards(1));
-                System.out.println("Dealer hand is: " + Arrays.toString(houseHand.getHandString()));
+                System.out.println("Dealer hand is: " + Arrays.toString(houseHand.getHandString()) + " with a score of " + Integer.toString(houseHand.getScore(gameType)));
+            }
+
+            try{
+                TimeUnit.MILLISECONDS.sleep(200);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
             }
 
             if(houseHand.getScore(gameType) > 21){
                 System.out.println("Dealer hand worth: " + Integer.toString(houseHand.getScore(gameType)));
                 System.out.println("Dealer loses, everyone wins!");
                 for(int i = 0; i < players.length; i++){
-                    players[i].win(players[i].current_bet);
+                    if(!players[i].out_this_round)
+                        players[i].win(players[i].current_bet);
                 }
             }
 
             for(int i = 0; i < players.length; i++){
+                try{
+                    TimeUnit.MILLISECONDS.sleep(500);
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
                 if(!players[i].out_this_round){
                     if(players[i].hand.getScore(gameType) == houseHand.getScore(gameType)){
                         players[i].tie();
@@ -164,15 +234,29 @@ public class GameManager {
                     }
                 }
             }
+            try{
+                TimeUnit.MILLISECONDS.sleep(500);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
+            }
             System.out.println("Round over.");
+            System.out.println("----------------------------------------------------------");
             deck.shuffle();
             System.out.println("Deck has been shuffled.");
         }
     }
 
     public void printBlackjack(){  //Prints the players hands and scores, dealer hand must be printed separately
+        try{
+            TimeUnit.MILLISECONDS.sleep(200);
+        }
+        catch(InterruptedException e){
+            e.printStackTrace();
+        }
         if(players[0].balance == 0){
-            System.out.println("You are out of money to bet, play again to reset balance.");
+            //System.out.println("You are out of money to bet, play again to reset balance.");
+            System.out.print("");
         }
         else if(players[0].out_this_round){
             //System.out.println("You are out this round with a hand of: " + Arrays.toString(players[0].hand.getHandString()));
@@ -183,6 +267,12 @@ public class GameManager {
         }
 
         for(int i = 1; i < players.length; i++){
+            try{
+                TimeUnit.MILLISECONDS.sleep(200);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
+            }
             if(players[i].balance == 0){
                 System.out.println("CPU" + Integer.toString(i) + " is out of money.");
             }
