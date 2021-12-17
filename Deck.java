@@ -6,15 +6,16 @@ public class Deck {
 
     public Deck(){
         cards = new int[52];
-        for(int i = 0; i < 52; i++){
+        for(int i = 0; i < 52; i++){ //the cards are just integers between 0 and 51 inclusive
             cards[i] = i;
         }
         currentIndex = 0;
         rand = new Random();
-        shuffle();
+        shuffle(); //shuffles the deck
     }
 
     public void shuffle(){
+        //The for loop swaps each card at index i with a card at some random index r for all i [0-51]
         for(int i = 0; i < 52; i++){
             int temp = cards[i];
             int r = rand.nextInt(52);
@@ -22,17 +23,18 @@ public class Deck {
             cards[r] = temp;
         }
 
-        currentIndex = 0;
+        currentIndex = 0; //keeps track of where the next card comes from
     }
 
     public int[] getCards(int n){
+        //This returns n cards from the top of the deck
         int[] retCards = new int[n];
         int i = 0;
         int prevIndex = currentIndex;
-        while(currentIndex < prevIndex + n){
-            retCards[i] = cards[currentIndex];
+        while(currentIndex < prevIndex + n){ //loops n times
+            retCards[i] = cards[currentIndex]; //adds cards to return list
             i++;
-            currentIndex++;
+            currentIndex++; //keeps track of the top of the deck
         }
         return retCards;
     }
