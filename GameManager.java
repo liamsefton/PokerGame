@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class GameManager {
     public Player[] players;
     public int gameType;
-    public Deck deck;
+    private Deck deck;
 
     public GameManager(int numPlayers, int gameType, String playerName){
         players = new Player[numPlayers]; //creates list of players
@@ -395,7 +395,7 @@ public class GameManager {
         }
     }
 
-    public void printPoker(){
+    private void printPoker(){
         try{
             TimeUnit.MILLISECONDS.sleep(200);
         }
@@ -413,7 +413,7 @@ public class GameManager {
         }
     }
 
-    public void printBlackjack(){  //Prints the players hands and scores, dealer hand must be printed separately
+    private void printBlackjack(){  //Prints the players hands and scores, dealer hand must be printed separately
         try{
             TimeUnit.MILLISECONDS.sleep(200);
         }
@@ -452,7 +452,7 @@ public class GameManager {
         }
     }
 
-    public void printPlayerBalances(){ //prints player balances
+    private void printPlayerBalances(){ //prints player balances
         System.out.println("Your remaining balance is: " + Double.toString(players[0].balance));
         for(int i = 1; i < players.length; i++){
             System.out.println("CPU" + Integer.toString(i) + " has a remaining balance of: " + Double.toString(players[i].balance));
