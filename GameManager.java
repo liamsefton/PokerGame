@@ -4,8 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 public class GameManager {
     public Player[] players;
-    public int currentPlayer;
-    public int currentRound;
     public int gameType;
     public Deck deck;
 
@@ -15,8 +13,6 @@ public class GameManager {
         for(int i = 1; i < numPlayers; i++){
             players[i] = new ComputerPlayer("CPU" + Integer.toString(i), 1000); //rest are computer players
         }
-        currentPlayer = 0;
-        currentRound = 1;
         this.gameType = gameType;
         deck = new Deck(); //initializes the deck object
     }
